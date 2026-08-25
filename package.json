@@ -1,0 +1,25 @@
+{
+  "name": "hono-app",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "dev": "node --watch src/dev.ts",
+    "test": "tsc && node --test"
+  },
+  "dependencies": {
+    "hono": "^4.13.4"
+  },
+  "devDependencies": {
+    "@hono/node-server": "^2.1.1",
+    "@types/node": "^26.3.0",
+    "aws-cdk": "^2.1138.0",
+    "aws-cdk-lib": "^2.266.0",
+    "constructs": "^10.8.1",
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2"
+  }
+}

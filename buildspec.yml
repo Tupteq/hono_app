@@ -1,0 +1,35 @@
+# CodeBuild spec that deploys the Hono stack for a single domain.
+#
+# Expects the aws/codebuild/standard:8.0 image (or newer) and a service role allowed
+# to assume the CDK bootstrap roles in the target account. The stack's two parameters,
+# DOMAIN and TRUSTSTORE, are read from the environment (see cdk/app.ts) and must be
+# set on the CodeBuild project — from Parameter Store or Secrets Manager rather than
+# in plaintext here.
+#
+# CDK_DEFAULT_ACCOUNT and CDK_DEFAULT_REGION, which app.ts also needs, are exported
+# by the cdk CLI itself from the resolved credentials, so they are not set below.
+
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      # cdk.json runs the TypeScript entry point directly, which needs Node's built-in
+      # type stripping: 22.18 or newer (see "engines" in package.json).
+      nodejs: 22
+    commands:
+      # Installs the pinned cdk CLI and esbuild too; fails on a stale lock rather than
+      # quietly resolving around it.
+      - npm ci
+  build:
+    commands:
+      - npx cdk deploy --require-approval never
+
+artifacts:
+  # Kept so a given build's synthesized template stays inspectable after the fact.
+  files:
+    - cdk.out/**/*
+
+cache:
+  paths:
+    - /root/.npm/**/*
