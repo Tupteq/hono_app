@@ -1,6 +1,6 @@
 // CDK entry point: reads the deploy parameters and instantiates the stack.
 //
-// Two deploy parameters, both required, both read from the environment:
+// Three deploy parameters, all required, all read from the environment:
 //
 //   DOMAIN      Custom domain name for the API, e.g. "api.example.com". A public
 //               Route53 hosted zone for its parent ("example.com") must already exist
@@ -14,10 +14,13 @@
 //               "?versionId=..." to pin one object version. The bucket is not managed
 //               here and must already be readable by API Gateway.
 //
+//   LABEL       Free-form string handed to the Lambda as an environment variable and
+//               echoed back by the API as the "label" key of its JSON response.
+//
 // The hosted-zone lookup runs at synth time, so CDK_DEFAULT_ACCOUNT and
 // CDK_DEFAULT_REGION must be set too; the cdk CLI exports them from your AWS profile.
 //
-//     DOMAIN=api.example.com TRUSTSTORE=s3://my-bucket/truststore.pem npx cdk deploy
+//     DOMAIN=api.example.com TRUSTSTORE=s3://my-bucket/truststore.pem LABEL=XXX npx cdk deploy
 //
 // Clients must then present a certificate signed by a CA in the truststore. The
 // generated execute-api endpoint is disabled, so the custom domain is the only way in.
@@ -72,6 +75,7 @@ new HonoAppStack(app, stackId(domain), {
   description: `Hono Lambda behind an mTLS API Gateway for ${domain}`,
   domain,
   truststore: parameter("TRUSTSTORE"),
+  label: parameter("LABEL"),
   // HostedZone.fromLookup needs a concrete account and region to query at synth time.
   env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
 });

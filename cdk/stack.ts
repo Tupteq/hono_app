@@ -1,6 +1,6 @@
 // The stack itself: a Lambda running the Hono app behind an mTLS HTTP API.
 //
-// Everything here takes its two parameters as plain props; reading and validating
+// Everything here takes its parameters as plain props; reading and validating
 // them is app.ts's job, so this module stays importable from tests and from any
 // other app that wants the same stack.
 
@@ -22,6 +22,7 @@ const ENTRY = path.join(import.meta.dirname, "../src/main.ts");
 export interface HonoAppStackProps extends cdk.StackProps {
   domain: string;
   truststore: string;
+  label: string;
 }
 
 /**
@@ -53,7 +54,11 @@ function mtlsConfig(scope: Construct, uri: string): apigw.MTLSConfig {
 
 /** Lambda running the Hono app, fronted by an mTLS API Gateway v2 custom domain. */
 export class HonoAppStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, { domain, truststore, ...props }: HonoAppStackProps) {
+  constructor(
+    scope: Construct,
+    id: string,
+    { domain, truststore, label, ...props }: HonoAppStackProps,
+  ) {
     super(scope, id, props);
 
     // Bundled locally with esbuild (a devDependency), so synth stays Docker-free.
@@ -63,6 +68,7 @@ export class HonoAppStack extends cdk.Stack {
       architecture: lambda.Architecture.ARM_64,
       memorySize: 1024,
       timeout: cdk.Duration.seconds(10),
+      environment: { LABEL: label },
       logGroup: new logs.LogGroup(this, "LogGroup", {
         retention: logs.RetentionDays.ONE_WEEK,
         removalPolicy: cdk.RemovalPolicy.DESTROY,

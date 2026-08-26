@@ -1,9 +1,9 @@
 # CodeBuild spec that deploys the Hono stack for a single domain.
 #
 # Expects the aws/codebuild/standard:8.0 image (or newer) and a service role allowed
-# to assume the CDK bootstrap roles in the target account. The stack's two parameters,
-# DOMAIN and TRUSTSTORE, are read from the environment (see cdk/app.ts) and must be
-# set on the CodeBuild project — from Parameter Store or Secrets Manager rather than
+# to assume the CDK bootstrap roles in the target account. The stack's parameters,
+# DOMAIN, TRUSTSTORE and LABEL, are read from the environment (see cdk/app.ts) and must
+# be set on the CodeBuild project — from Parameter Store or Secrets Manager rather than
 # in plaintext here.
 #
 # CDK_DEFAULT_ACCOUNT and CDK_DEFAULT_REGION, which app.ts also needs, are exported

@@ -7,12 +7,14 @@ test("stack synthesizes", () => {
   const stack = new HonoAppStack(new cdk.App(), "Test", {
     domain: "api.example.com",
     truststore: "s3://bucket/truststore.pem?versionId=abc",
+    label: "test",
     env: { account: "123456789012", region: "eu-central-1" },
   });
   const template = Template.fromStack(stack);
   template.hasResourceProperties("AWS::Lambda::Function", {
     Runtime: "nodejs24.x",
     Handler: "index.handler",
+    Environment: { Variables: { LABEL: "test" } },
   });
   template.hasResourceProperties("AWS::ApiGatewayV2::DomainName", {
     DomainName: "api.example.com",
