@@ -91,6 +91,7 @@ export class HonoAppStack extends cdk.Stack {
 
     // $default route: API Gateway proxies every path and method to Hono.
     new apigw.HttpApi(this, "HttpApi", {
+      description: `API Gateway ${domain}`,
       defaultIntegration: new integrations.HttpLambdaIntegration("Integration", fn),
       defaultDomainMapping: { domainName },
       // Without this the generated execute-api URL still serves the API without mTLS.
